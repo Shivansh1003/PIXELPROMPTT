@@ -76,10 +76,12 @@ const MOBS: MobConfig[] = [
   },
 ];
 
-type Phase = "idle" | "hit" | "broken" | "respawn";
+type Phase = "idle" | "hit" | "charging" | "broken" | "respawn";
 
 function reactionClass(phase: Phase) {
   switch (phase) {
+    case "charging":
+      return "animate-creeper-charge";
     case "broken":
       return "animate-mob-break";
     case "respawn":
