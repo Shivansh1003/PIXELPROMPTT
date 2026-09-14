@@ -435,6 +435,81 @@
   }
 }
 
+/* Layered character motion keeps idle movement independent from reactions. */
+@keyframes steve-idle {
+  0%, 100% { transform: translateY(0) rotate(-1deg) scale(1); }
+  20% { transform: translateY(-7px) rotate(1deg) scale(1.015, 0.985); }
+  42% { transform: translateY(-2px) rotate(0deg) scale(0.99, 1.01); }
+  68% { transform: translateY(-10px) rotate(-2deg) scale(1.02, 0.98); }
+  82% { transform: translateY(-3px) rotate(2deg) scale(0.99, 1.01); }
+}
+
+.animate-steve-idle { animation: steve-idle 4.8s steps(12, end) infinite; transform-origin: 50% 100%; }
+.animate-steve-impact { animation: punch-impact 0.38s cubic-bezier(0.2, 1.55, 0.45, 1), hit-flash 0.3s steps(4, end); }
+
+@keyframes creeper-stalk {
+  0%, 100% { transform: translate(-7px, 1px) rotate(-1deg); }
+  45% { transform: translate(8px, -5px) rotate(1deg); }
+  55% { transform: translate(8px, -5px) rotate(1deg) scale(1.035); }
+}
+
+@keyframes zombie-lurch {
+  0%, 100% { transform: translate(-5px, 2px) rotate(-3deg); }
+  25% { transform: translate(1px, -7px) rotate(2deg); }
+  58% { transform: translate(7px, 0) rotate(4deg); }
+  78% { transform: translate(2px, -4px) rotate(-2deg); }
+}
+
+@keyframes skeleton-aim {
+  0%, 100% { transform: translateY(1px) rotate(-2deg); }
+  38% { transform: translateY(-8px) rotate(3deg); }
+  52% { transform: translate(3px, -6px) rotate(5deg); }
+  58% { transform: translate(-4px, -5px) rotate(-4deg); }
+}
+
+@keyframes enderman-loom {
+  0%, 100% { transform: translateY(3px) scale(0.98, 1.02); filter: brightness(1); }
+  35% { transform: translateY(-9px) scale(1.015, 1.04); filter: brightness(1.08); }
+  37% { transform: translate(4px, -9px) scale(1.015, 1.04); }
+  39% { transform: translate(-3px, -9px) scale(1.015, 1.04); }
+  70% { transform: translateY(-3px) scale(1); }
+}
+
+.mob-idle { transform-origin: 50% 85%; }
+.mob-idle--creeper { animation: creeper-stalk 3.1s steps(10, end) infinite; }
+.mob-idle--zombie { animation: zombie-lurch 2.8s steps(9, end) infinite; }
+.mob-idle--skeleton { animation: skeleton-aim 3.2s steps(12, end) infinite; }
+.mob-idle--enderman { animation: enderman-loom 4.2s steps(14, end) infinite; }
+.animate-mob-hit { animation: knockback 0.38s cubic-bezier(0.2, 1.5, 0.4, 1), hit-flash 0.3s steps(4, end); }
+.animate-mob-break { animation: break-out 0.48s cubic-bezier(0.55, 0, 1, 0.45) forwards; }
+.animate-mob-respawn { animation: respawn-in 0.52s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+@keyframes mob-dodge {
+  0% { transform: translateX(0); opacity: 1; }
+  35% { transform: translateX(55px) scaleY(1.08); opacity: 0; }
+  65% { transform: translateX(-45px) scaleY(1.08); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+.animate-mob-dodge { animation: mob-dodge 0.42s steps(7, end); }
+
+@keyframes fuse-pop {
+  0% { transform: translate(-50%, -50%) scale(0.25); opacity: 0; }
+  45% { opacity: 0.85; }
+  100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+}
+.creeper-fuse, .creeper-blast { position: absolute; left: 50%; top: 50%; border: 6px solid var(--color-foreground); pointer-events: none; }
+.creeper-fuse { width: 54px; height: 54px; animation: fuse-pop 0.38s steps(5, end); }
+.creeper-blast { z-index: 25; width: 88px; height: 88px; border-width: 12px; animation: fuse-pop 0.48s steps(6, end); }
+
+@keyframes arrow-shot {
+  0% { transform: translate(0, -50%); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(120px, -50%); opacity: 0; }
+}
+.skeleton-arrow { position: absolute; top: 48%; left: 58%; z-index: 22; width: 44px; height: 4px; background: var(--color-stone); box-shadow: 8px -4px 0 -1px var(--color-stone), 8px 4px 0 -1px var(--color-stone); animation: arrow-shot 0.48s steps(8, end) forwards; }
+
+.ender-echo { position: absolute; inset: 16px 42px; border: 3px solid var(--color-ender); opacity: 0.7; filter: blur(1px); }
+
 @keyframes achievement-toast {
   0% {
     transform: translateX(-120%);

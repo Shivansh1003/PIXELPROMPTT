@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SnapIn } from "./SnapIn";
 import { CrackOverlay } from "./CrackOverlay";
 import { BreakParticles } from "./BreakParticles";
@@ -9,14 +9,13 @@ import skeletonImg from "@/assets/mob-skeleton.png";
 import endermanImg from "@/assets/mob-enderman.png";
 
 interface MobConfig {
+  kind: "creeper" | "zombie" | "skeleton" | "enderman";
   name: string;
   img: string;
   threat: string;
   threatTone: string;
   hiss: string;
   story: string;
-  /** Base looping animation(s), combined via a raw `animation` string. */
-  idleBase: string;
   /** Tailwind bg-* color used to tint the block-break debris. */
   tone: string;
   hitsRequired: number;
@@ -27,49 +26,49 @@ interface MobConfig {
 
 const MOBS: MobConfig[] = [
   {
+    kind: "creeper",
     name: "Creeper",
     img: creeperImg,
     threat: "Extreme",
     threatTone: "text-destructive",
     hiss: "Hissssss…",
     story: "Took out the east wall of the Bastion twice. Now the wall is obsidian.",
-    idleBase: "bob 2.6s steps(8, end) infinite",
     tone: "bg-grass",
     hitsRequired: 2,
     drop: "+1 GUNPOWDER",
   },
   {
+    kind: "zombie",
     name: "Zombie",
     img: zombieImg,
     threat: "Moderate",
     threatTone: "text-grass",
     hiss: "Uuurrgh…",
     story: "Groans at the cabin door every night. Has never once figured out the latch.",
-    idleBase: "bob 3.8s steps(10, end) infinite, shuffle 2.4s steps(6, end) infinite",
     tone: "bg-grass-dark",
     hitsRequired: 3,
     drop: "+1 ROTTEN FLESH",
   },
   {
+    kind: "skeleton",
     name: "Skeleton",
     img: skeletonImg,
     threat: "High",
     threatTone: "text-gold",
     hiss: "*rattle*",
     story: "Perfect aim across the ravine. Steve built a roof purely out of spite.",
-    idleBase: "bob 2.6s steps(8, end) infinite, aim-track 2.8s ease-in-out infinite",
     tone: "bg-stone",
     hitsRequired: 3,
     drop: "+3 BONES",
   },
   {
+    kind: "enderman",
     name: "Enderman",
     img: endermanImg,
     threat: "Do not look",
     threatTone: "text-ender",
     hiss: "vwoop",
     story: "Keeps stealing one dirt block from the garden path. Only ever one.",
-    idleBase: "teleport 7s steps(1, end) infinite",
     tone: "bg-ender",
     hitsRequired: 3,
     dodgeChance: 0.4,
@@ -79,16 +78,16 @@ const MOBS: MobConfig[] = [
 
 type Phase = "idle" | "hit" | "broken" | "respawn";
 
-function animationFor(mob: MobConfig, phase: Phase) {
+function reactionClass(phase: Phase) {
   switch (phase) {
     case "broken":
-      return "break-out 0.48s cubic-bezier(0.55,0,1,0.45) forwards";
+      return "animate-mob-break";
     case "respawn":
-      return `${mob.idleBase}, respawn-in 0.5s cubic-bezier(0.34,1.56,0.64,1) both`;
+      return "animate-mob-respawn";
     case "hit":
-      return `${mob.idleBase}, knockback 0.38s cubic-bezier(0.34,1.56,0.64,1), hit-flash 0.3s steps(4,end)`;
+      return "animate-mob-hit";
     default:
-      return mob.idleBase;
+      return "";
   }
 }
 
@@ -100,6 +99,8 @@ function MobCard({ mob, delay }: { mob: MobConfig; delay: number }) {
   const [showDrop, setShowDrop] = useState(false);
   const [breakSeed, setBreakSeed] = useState(0);
   const timers = useRef<number[]>([]);
+
+  useEffect(() => () => timers.current.forEach(window.clearTimeout), []);
 
   const queue = (fn: () => void, ms: number) => {
     const id = window.setTimeout(fn, ms);
@@ -155,21 +156,31 @@ function MobCard({ mob, delay }: { mob: MobConfig; delay: number }) {
           aria-label={`Hit the ${mob.name}`}
           className="relative grid h-40 w-full cursor-crosshair place-items-center overflow-hidden bg-background/60 pixel-block-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
         >
-          <img
-            key={`${mob.name}-${phase}-${hitKey}`}
-            src={mob.img}
-            alt={`${mob.name} pixel art`}
-            width={816}
-            height={816}
-            loading="lazy"
-            className={cn("h-32 w-auto crisp", dodging && "opacity-30")}
-            style={{ animation: animationFor(mob, phase) }}
-          />
+          <span className={cn("mob-idle absolute inset-0 grid place-items-center", `mob-idle--${mob.kind}`)}>
+            <span className={cn("relative grid h-full w-full place-items-center", reactionClass(phase), dodging && "animate-mob-dodge")}>
+              <img
+                key={`${mob.name}-${phase}-${hitKey}`}
+                src={mob.img}
+                alt={`${mob.name} pixel art`}
+                width={816}
+                height={816}
+                loading="lazy"
+                className="h-32 w-auto crisp"
+              />
+              {mob.kind === "creeper" && phase === "hit" && <span aria-hidden className="creeper-fuse" />}
+              {mob.kind === "skeleton" && phase === "hit" && <span aria-hidden className="skeleton-arrow" />}
+              {mob.kind === "enderman" && dodging && <span aria-hidden className="ender-echo" />}
+            </span>
+          </span>
 
           <CrackOverlay hits={crackHits} />
 
           {phase === "broken" && (
             <BreakParticles tone={mob.tone} seed={breakSeed} count={14} />
+          )}
+
+          {mob.kind === "creeper" && phase === "broken" && (
+            <span aria-hidden className="creeper-blast" />
           )}
 
           {showDrop && (
