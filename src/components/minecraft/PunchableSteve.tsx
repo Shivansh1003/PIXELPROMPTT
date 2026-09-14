@@ -93,8 +93,6 @@ export function PunchableSteve({ src, className, width, height }: PunchableSteve
             hitKey > 0 && "animate-steve-impact"
           )}
         />
-        <span className="steve-eye steve-eye--left" aria-hidden />
-        <span className="steve-eye steve-eye--right" aria-hidden />
       </span>
       {hitKey > 0 && (
         <div className="pointer-events-none absolute inset-0">
