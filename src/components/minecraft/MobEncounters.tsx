@@ -76,7 +76,7 @@ const MOBS: MobConfig[] = [
   },
 ];
 
-type Phase = "idle" | "hit" | "broken" | "respawn";
+type Phase = "idle" | "hit" | "charging" | "broken" | "respawn";
 
 function reactionClass(phase: Phase) {
   switch (phase) {
