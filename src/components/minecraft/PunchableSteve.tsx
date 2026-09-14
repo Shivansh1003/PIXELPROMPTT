@@ -38,7 +38,7 @@ export function PunchableSteve({ src, className, width, height }: PunchableSteve
       onClick={handleClick}
       aria-label="Poke Steve"
       className={cn(
-        "pointer-events-auto absolute top-12 -left-20 z-10 hidden h-56 w-40 cursor-crosshair overflow-visible focus:outline-none focus-visible:ring-4 focus-visible:ring-gold lg:block xl:-left-24 xl:h-64 xl:w-48",
+        "pointer-events-auto absolute top-16 left-0 z-10 h-40 w-28 cursor-crosshair overflow-visible focus:outline-none focus-visible:ring-4 focus-visible:ring-gold sm:h-48 sm:w-36 lg:top-12 lg:-left-20 lg:h-56 lg:w-40 xl:-left-24 xl:h-64 xl:w-48",
         className
       )}
     >
@@ -51,7 +51,7 @@ export function PunchableSteve({ src, className, width, height }: PunchableSteve
           height={height}
           aria-hidden
           className={cn(
-            "h-56 w-auto max-w-none crisp drop-shadow-[7px_7px_0_rgba(0,0,0,0.42)] xl:h-64",
+            "h-40 w-auto max-w-none crisp drop-shadow-[7px_7px_0_rgba(0,0,0,0.42)] sm:h-48 lg:h-56 xl:h-64",
             hitKey > 0 && "animate-steve-impact"
           )}
         />
