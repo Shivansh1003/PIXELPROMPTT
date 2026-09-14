@@ -21,26 +21,30 @@ export function PunchableSteve({ src, className, width, height }: PunchableSteve
   const [action, setAction] = useState<SteveAction>("idle");
   const [attackKey, setAttackKey] = useState(0);
   const idxRef = useRef(0);
+  const actionRef = useRef<SteveAction>("idle");
   const timerRef = useRef<number | null>(null);
   const actionTimersRef = useRef<number[]>([]);
 
   const playAttack = useCallback(() => {
-    if (action !== "idle") return;
+    if (actionRef.current !== "idle") return;
     actionTimersRef.current.forEach((timer) => window.clearTimeout(timer));
     actionTimersRef.current = [];
+    actionRef.current = "greeting";
     setAction("greeting");
     setCallout("HI!");
     actionTimersRef.current.push(window.setTimeout(() => {
+      actionRef.current = "attacking";
       setAction("attacking");
       setCallout("HYAA!");
       setAttackKey((key) => key + 1);
       setDustSeed(Date.now());
     }, 850));
     actionTimersRef.current.push(window.setTimeout(() => {
+      actionRef.current = "idle";
       setAction("idle");
       setCallout(null);
     }, 1900));
-  }, [action]);
+  }, []);
 
   useEffect(() => {
     const openingTimer = window.setTimeout(playAttack, 900);
