@@ -28,7 +28,7 @@ export function PunchableSteve({ src, className, width, height }: PunchableSteve
     setDustSeed(Date.now());
     if (timerRef.current !== null) window.clearTimeout(timerRef.current);
     idxRef.current = (idxRef.current + 1) % CALLOUTS.length;
-    setCallout(CALLOUTS[idxRef.current]);
+    setCallout(CALLOUTS[idxRef.current] ?? "OW!");
     timerRef.current = window.setTimeout(() => setCallout(null), 900);
   };
 
