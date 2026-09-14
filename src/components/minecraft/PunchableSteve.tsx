@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { BreakParticles } from "./BreakParticles";
 
@@ -21,25 +21,32 @@ export function PunchableSteve({ src, className, width, height }: PunchableSteve
   const [action, setAction] = useState<SteveAction>("idle");
   const [attackKey, setAttackKey] = useState(0);
   const idxRef = useRef(0);
+  const actionRef = useRef<SteveAction>("idle");
   const timerRef = useRef<number | null>(null);
   const actionTimersRef = useRef<number[]>([]);
 
-  useEffect(() => {
-    const playAttack = () => {
-      setAction("greeting");
-      setCallout("HI!");
-      actionTimersRef.current.push(window.setTimeout(() => {
-        setAction("attacking");
-        setCallout("HYAA!");
-        setAttackKey((key) => key + 1);
-        setDustSeed(Date.now());
-      }, 850));
-      actionTimersRef.current.push(window.setTimeout(() => {
-        setAction("idle");
-        setCallout(null);
-      }, 1900));
-    };
+  const playAttack = useCallback(() => {
+    if (actionRef.current !== "idle") return;
+    actionTimersRef.current.forEach((timer) => window.clearTimeout(timer));
+    actionTimersRef.current = [];
+    actionRef.current = "greeting";
+    setAction("greeting");
+    setCallout("HI!");
+    actionTimersRef.current.push(window.setTimeout(() => {
+      actionRef.current = "attacking";
+      setAction("attacking");
+      setCallout("HYAA!");
+      setAttackKey((key) => key + 1);
+      setDustSeed(Date.now());
+    }, 850));
+    actionTimersRef.current.push(window.setTimeout(() => {
+      actionRef.current = "idle";
+      setAction("idle");
+      setCallout(null);
+    }, 1900));
+  }, []);
 
+  useEffect(() => {
     const openingTimer = window.setTimeout(playAttack, 900);
     const repeatTimer = window.setInterval(playAttack, 9000);
 
@@ -49,7 +56,7 @@ export function PunchableSteve({ src, className, width, height }: PunchableSteve
       actionTimersRef.current.forEach((timer) => window.clearTimeout(timer));
       if (timerRef.current !== null) window.clearTimeout(timerRef.current);
     };
-  }, []);
+  }, [playAttack]);
 
   const handleClick = () => {
     setHitKey((k) => k + 1);
@@ -64,6 +71,7 @@ export function PunchableSteve({ src, className, width, height }: PunchableSteve
     <button
       type="button"
       onClick={handleClick}
+      onPointerEnter={playAttack}
       aria-label="Poke Steve"
       className={cn(
         "pointer-events-auto absolute top-16 left-0 z-10 h-40 w-28 cursor-crosshair overflow-visible focus:outline-none focus-visible:ring-4 focus-visible:ring-gold sm:h-48 sm:w-36 lg:top-12 lg:-left-20 lg:h-56 lg:w-40 xl:-left-24 xl:h-64 xl:w-48",
@@ -85,6 +93,8 @@ export function PunchableSteve({ src, className, width, height }: PunchableSteve
             hitKey > 0 && "animate-steve-impact"
           )}
         />
+        <span className="steve-eye steve-eye--left" aria-hidden />
+        <span className="steve-eye steve-eye--right" aria-hidden />
       </span>
       {hitKey > 0 && (
         <div className="pointer-events-none absolute inset-0">
