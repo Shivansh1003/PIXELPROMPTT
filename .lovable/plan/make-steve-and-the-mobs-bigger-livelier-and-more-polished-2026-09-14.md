@@ -7,9 +7,9 @@
 - Upgrade Steve’s idle motion from a simple repeated bob to a more characterful sequence with gentle breathing, weight shifts, and occasional playful movement.
 - Make Steve’s click reaction feel punchier and cleaner with better timing, impact movement, particles, and rotating comic callouts.
 - Give each mob a distinct movement style instead of relying mainly on the same bob:
-  - Creeper: cautious stalking and a brief charge-up pulse.
+  - Creeper: cautious stalking and a brief charge-up pulse and blow up
   - Zombie: uneven shuffling and head/body sway.
-  - Skeleton: alert aiming movement and recoil-like reactions.
+  - Skeleton: alert aiming movement and shoot arrow and recoil-like reactions.
   - Enderman: subtle looming motion, jitter, and cleaner teleport effects.
 - Refine hit, dodge, defeat, item-drop, and respawn transitions so they remain readable and fun without becoming chaotic.
 - Keep all interactions keyboard accessible and provide a calm reduced-motion version.
